@@ -441,11 +441,10 @@ public class WebServiceComposition {
 	 * @return graph of input-output matches
 	 */
 	private void createDependencyGraph(Set<ServiceNode> relevantServices, Map<String, DataNode> relevantData, Map<String, Edge> edgeMap, Map<String, ServiceNode> serviceMap, Map<String, DataNode> dataMap) {
-		// Populate dependency graph inputs by querying the taxonomy
+		// Populate dependencyGraphInputs by querying the taxonomy
 		for (String i : taskInput) {
-			for (ServiceNode s : taxonomyMap.get(i).servicesWithInput.keySet()) {
-				if (relevantServices.contains(s))
-					dependencyGraphInputs.addAll(s.getInputs());
+			for (Set<String> s : taxonomyMap.get(i).servicesWithInput.values()) {
+				dependencyGraphInputs.addAll(s);
 			}
 		}
 		
