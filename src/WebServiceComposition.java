@@ -455,8 +455,7 @@ public class WebServiceComposition {
 		for (ServiceNode serv : relevantServices) {
 			serviceMap.put(serv.toString(), serv);
 			for (String i : serv.getInputs()) {
-				DataNode dn = relevantData.get(i);
-				dataMap.put(i, dn);
+				DataNode dn = putAndGetInMap(dataMap, i);
 				Edge e = new Edge();
 				e.setFromNode(dn);
 				e.setToNode(serv);
@@ -467,8 +466,7 @@ public class WebServiceComposition {
 		}
 		// Also add output data nodes without making connections
 		for (String o : taskOutput) {
-			DataNode dn = relevantData.get(o);
-			dataMap.put(o, dn);
+			putAndGetInMap(dataMap, o);
 		}
 
 		// For all data nodes (except start ones), find services that satisfy them and create edges
@@ -491,6 +489,13 @@ public class WebServiceComposition {
 		for (String i : dependencyGraphInputs) {
 			dataMap.get(i).setLayer(0);
 		}
+	}
+	
+	private DataNode putAndGetInMap(Map<String,DataNode> dataMap, String d) {
+		if (!dataMap.containsKey(d))
+			dataMap.put(d, new DataNode(d));
+			
+		return dataMap.get(d);
 	}
 
 	/**
