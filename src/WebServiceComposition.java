@@ -448,6 +448,8 @@ public class WebServiceComposition {
 			}
 		}
 		
+		System.out.println("All dependency graph inputs: " + dependencyGraphInputs);
+		
 		// For all services, add their inputs as data nodes (with edges to services)
 		for (ServiceNode serv : relevantServices) {
 			serviceMap.put(serv.toString(), serv);
