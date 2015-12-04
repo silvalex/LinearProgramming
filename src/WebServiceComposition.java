@@ -447,7 +447,6 @@ public class WebServiceComposition {
 				dependencyGraphInputs.addAll(s);
 			}
 		}
-		
 		System.out.println("All dependency graph inputs: " + dependencyGraphInputs);
 		
 		// For all services, add their inputs as data nodes (with edges to services)
