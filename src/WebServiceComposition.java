@@ -443,8 +443,10 @@ public class WebServiceComposition {
 	private void createDependencyGraph(Set<ServiceNode> relevantServices, Map<String, DataNode> relevantData, Map<String, Edge> edgeMap, Map<String, ServiceNode> serviceMap, Map<String, DataNode> dataMap) {
 		// Populate dependencyGraphInputs by querying the taxonomy
 		for (String i : taskInput) {
-			for (Set<String> s : taxonomyMap.get(i).servicesWithInput.values()) {
-				dependencyGraphInputs.addAll(s);
+			for (ServiceNode s : taxonomyMap.get(i).servicesWithInput.keySet()) {
+				if (relevantServices.contains(s)) {
+					dependencyGraphInputs.addAll(taxonomyMap.get(i).servicesWithInput.get(s));
+				}
 			}
 		}
 		System.out.println("All dependency graph inputs: " + dependencyGraphInputs);
