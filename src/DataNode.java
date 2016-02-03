@@ -29,7 +29,8 @@ public class DataNode implements Node {
 	}
 
 	public void setLayer(int layer) {
-		this.layer = layer;
+		if (this.layer == -1 || layer < this.layer)
+			this.layer = layer;
 	}
 
 	@Override
