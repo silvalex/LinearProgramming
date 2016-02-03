@@ -101,9 +101,12 @@ public class WebServiceComposition {
 		// Create dependency graph
 		System.out.println("Dependency graph inputs:");
 		System.out.println(dependencyGraphInputs);
-		System.out.println("Dependency graph:");
 		createDependencyGraph(relevantServices, relevantData, dependencyGraphEdges, dependencyGraphNodes, dependencyGraphData);
-		System.out.println(edgesToDot(dependencyGraphEdges));
+		System.out.println("Number of service nodes in dependency graph:");
+		System.out.println(dependencyGraphNodes.size());
+		System.out.println("Number of data nodes in dependency graph:");
+		System.out.println(dependencyGraphData.size());
+		//System.out.println(edgesToDot(dependencyGraphEdges));
 
 		try {
 			GRBEnv env = new GRBEnv();
@@ -252,8 +255,22 @@ public class WebServiceComposition {
 		      // Optimize model
 		      model.optimize();
 
-		      // Write model to file
-		      model.write("wsc.lp");
+		      // Get optimisation status once completed
+		      int optimisationStatus = model.get(GRB.IntAttr.Status);
+
+		      if (optimisationStatus == GRB.Status.INFEASIBLE) {
+			      /* If model is infeasible, compute an Irreducible Inconsistent Subsystem (IIS). An
+			       * IIS is a subset of the constraints and variable bounds of the original model. If all
+			       * constraints in the model except those in the IIS are removed, the model is still
+			       * infeasible. However, further removing any one member of the IIS produces a feasible
+			       * result.*/
+		    	  model.computeIIS();
+		    	  model.write("wsc.ilp");
+		      }
+		      else {
+		    	  // Write model to file
+		    	  model.write("wsc.lp");
+		      }
 
 		      // Generate graph solution using dot syntax
 		      Map<String, Double> valueMap = new HashMap<String, Double>();
@@ -528,7 +545,10 @@ public class WebServiceComposition {
 					//populateOutputs(startNode); XXX
 				}
 				for (String i : s.getInputs()) {
-					DataNode dn = new DataNode(i);
+					DataNode dn = relevantData.get(i);
+					if (dn == null) {
+						dn = new DataNode(i);
+					}
 					dn.setLayer(layer-1);
 					relevantData.put(i,dn);
 				}
@@ -565,9 +585,10 @@ public class WebServiceComposition {
 	private Set<ServiceNode> discoverService(Collection<ServiceNode> services, Set<String> searchSet, int layer) {
 		Set<ServiceNode> found = new HashSet<ServiceNode>();
 		for (ServiceNode s: services) {
-			if (isSubsumed(s.getInputs(), searchSet))
+			if (isSubsumed(s.getInputs(), searchSet)) {
 				found.add(s);
 				s.setLayer(layer);
+			}
 		}
 		return found;
 	}

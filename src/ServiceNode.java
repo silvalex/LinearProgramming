@@ -10,7 +10,7 @@ public class ServiceNode implements Cloneable, Node {
 	private double[] qos;
 	private Set<String> inputs;
 	private Set<String> outputs;
-	private int layer;
+	private int layer = -1;
 
 	public ServiceNode(String name, double[] qos, Set<String> inputs, Set<String> outputs) {
 		this.name = name;
@@ -60,7 +60,8 @@ public class ServiceNode implements Cloneable, Node {
 	}
 
 	public void setLayer(int layer) {
-		this.layer = layer;
+		if (this.layer == -1 || layer < this.layer)
+			this.layer = layer;
 	}
 
 	@Override
